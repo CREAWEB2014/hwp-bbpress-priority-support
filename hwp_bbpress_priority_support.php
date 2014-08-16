@@ -39,6 +39,8 @@
 define( 'HWP_BPS_VERSION', '0.1.0' );
 define( 'HWP_BPS_URL',     plugin_dir_url( __FILE__ ) );
 define( 'HWP_BPS_PATH',    dirname( __FILE__ ) . '/' );
+define( 'HWP_BPS_ASSETS_URL', HWP_BPS_URL.'/assets/' );
+define( 'HWP_BPS_CLASS_PATH', HWP_BPS_PATH.'includes/classes/' );
 
 /**
  * Default initialization for the plugin:
@@ -72,7 +74,20 @@ register_deactivation_hook( __FILE__, 'hwp_bps_deactivate' );
 
 // Wireup actions
 add_action( 'init', 'hwp_bps_init' );
+add_action( 'init', 'hwp_bps_classes' );
 
-// Wireup filters
+function hwp_bps_classes() {
+	if ( defined( 'PODS_VERSION' ) && function_exists( 'bbPress' ) ) {
+		include_once( HWP_BPS_CLASS_PATH.'hwp_bps_class.php' );
+		$GLOBALS[ 'hwp_bps_class' ] = new hwp_bps_class();
+	}
 
-// Wireup shortcodes
+}
+
+function hwp_bps_pods_setup() {
+	if ( defined( 'HWP_BPP_VERSION' ) && defined( 'PODS_VERSION' ) ) {
+		include( HWP_BPS_CLASS_PATH . 'hwp_bps_pods_setup.php' );
+
+		new hwp_bpa_pods_setup();
+	}
+}
